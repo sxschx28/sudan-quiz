@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quiz: Saudi-Arabien im Sudan-Konflikt</title>
+<style>
+:root{
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue","Segoe UI",Roboto,Arial,sans-serif;
+  --fs:1;
+  --text:#1d1d1f; --muted:#6e6e73;
+  --glass:rgba(255,255,255,.62); --glass-strong:rgba(255,255,255,.82);
+  --border:rgba(255,255,255,.7); --line:rgba(0,0,0,.08);
+  --shadow:0 10px 40px rgba(31,38,80,.14);
+  --accent:#0a84ff; --accent2:#5e5ce6;
+  --green:#30b350; --green-bg:rgba(52,199,89,.22); --green-bd:#34c759;
+  --red:#e5362d; --red-bg:rgba(255,69,58,.18); --red-bd:#ff453a;
+  --bg1:#dfe9ff; --bg2:#f4e6ff; --bg3:#d9f3ff;
+  --dur:.45s;
+}
+[data-theme="dark"]{
+  --text:#f5f5f7; --muted:#a1a1a6;
+  --glass:rgba(40,40,48,.55); --glass-strong:rgba(44,44,52,.85);
+  --border:rgba(255,255,255,.12); --line:rgba(255,255,255,.1);
+  --shadow:0 10px 40px rgba(0,0,0,.5);
+  --green:#32d74b; --green-bg:rgba(48,209,88,.24);
+  --red:#ff6961; --red-bg:rgba(255,69,58,.24);
+  --bg1:#0b1020; --bg2:#1a1030; --bg3:#07202e;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:calc(16px * var(--fs))}
+html,body{margin:0;height:100%}
+body{font-family:var(--font);color:var(--text);background:var(--bg1);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body.no-anim *{animation:none!important;transition:none!important}
+
+/* Hintergrund */
+#bg{position:fixed;inset:0;z-index:-2;background:linear-gradient(135deg,var(--bg1),var(--bg2) 55%,var(--bg3));background-size:cover;background-position:center}
+#bg.custom{background-image:var(--bgimg)}
+#blobs{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+#bg.custom ~ #blobs{display:none}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;animation:float 18s ease-in-out infinite}
+.b1{width:46vmax;height:46vmax;background:#7aa7ff;top:-12vmax;left:-10vmax}
+.b2{width:40vmax;height:40vmax;background:#d79bff;bottom:-14vmax;right:-8vmax;animation-delay:-6s}
+.b3{width:30vmax;height:30vmax;background:#7ee0ff;top:35%;left:45%;animation-delay:-11s;opacity:.35}
+[data-theme="dark"] .blob{opacity:.3}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(4vmax,3vmax) scale(1.08)}}
+
+/* Top-Leiste */
+#topbar{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:max(14px,env(safe-area-inset-top)) 18px 14px;z-index:20;pointer-events:none}
+#topbar>*{pointer-events:auto}
+.tb-left,.tb-right{display:flex;gap:10px;align-items:center}
+.icon-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:var(--glass);backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);color:var(--text);display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow);transition:transform .2s,background .2s}
+.icon-btn:hover{transform:scale(1.07);background:var(--glass-strong)}
+.icon-btn:active{transform:scale(.94)}
+.icon-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn.active{background:var(--accent);color:#fff;border-color:transparent}
+body.hide-top-left .tb-left{display:none}
+body:not(.unlocked) .tb-right{display:none}
+
+/* Screens */
+main{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:84px 18px 40px}
+.screen{display:none;width:100%}
+.screen.active{display:grid;place-items:center;animation:fadeUp var(--dur) cubic-bezier(.2,.8,.2,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+.card{background:var(--glass);backdrop-filter:blur(30px) saturate(1.7);-webkit-backdrop-filter:blur(30px) saturate(1.7);border:1px solid var(--border);border-radius:32px;box-shadow:var(--shadow);padding:clamp(24px,4vw,48px);width:100%}
+.center{text-align:center}
+.eyebrow{font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:clamp(2rem,5.2vw,3.6rem);line-height:1.06;letter-spacing:-.03em;margin:.35em 0 .4em;font-weight:700}
+h2{font-size:clamp(1.5rem,3.4vw,2.2rem);letter-spacing:-.02em;margin:.2em 0}
+p.lead{font-size:clamp(1.05rem,1.8vw,1.3rem);color:var(--muted);line-height:1.5;margin:0 auto 1.4em;max-width:40ch}
+.grad{background:linear-gradient(90deg,var(--accent),var(--accent2),#bf5af2);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.btn{font:inherit;font-weight:600;font-size:1.05rem;border:none;border-radius:999px;padding:.95em 1.9em;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 8px 24px rgba(10,132,255,.35);transition:transform .2s,box-shadow .2s,opacity .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(10,132,255,.45)}
+.btn:active{transform:scale(.96)}
+.btn.big{font-size:1.25rem;padding:1em 2.6em}
+.btn.ghost{background:var(--glass-strong);color:var(--text);box-shadow:none;border:1px solid var(--line)}
+.btn.ghost:hover{box-shadow:var(--shadow)}
+.btn[disabled]{opacity:.35;cursor:not-allowed;transform:none}
+
+/* Passwort */
+#screen-lock .card{max-width:460px}
+.lock-icon{width:72px;height:72px;margin:0 auto 14px;border-radius:22px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 10px 30px rgba(94,92,230,.4);transition:transform .6s}
+.lock-icon svg{width:36px;height:36px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pw-wrap{position:relative;margin:18px 0 10px}
+.pw-wrap input{width:100%;font:inherit;font-size:1.1rem;padding:1em 3.2em 1em 1.2em;border-radius:18px;border:1.5px solid var(--line);background:var(--glass-strong);color:var(--text);outline:none;transition:border .2s,box-shadow .2s}
+.pw-wrap input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(10,132,255,.18)}
+.pw-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:40px;height:40px;border:none;background:none;color:var(--muted);cursor:pointer;border-radius:50%;display:grid;place-items:center}
+.pw-eye svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pw-error{min-height:1.5em;color:var(--red);font-size:.95rem;margin:4px 0 12px}
+.shake{animation:shake .45s}
+@keyframes shake{20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
+#screen-lock.unlocking .card{animation:unlock .7s forwards}
+#screen-lock.unlocking .lock-icon{transform:rotate(360deg) scale(1.15)}
+@keyframes unlock{to{opacity:0;transform:scale(1.06) translateY(-14px);filter:blur(8px)}}
+
+/* Start */
+#screen-start .card{max-width:760px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 0 30px}
+.chip{display:flex;align-items:center;gap:8px;padding:.55em 1.05em;border-radius:999px;background:var(--glass-strong);border:1px solid var(--line);font-weight:500;font-size:.98rem}
+.chip svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* Quiz */
+#screen-quiz .card{max-width:960px}
+.q-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;color:var(--muted);font-weight:600}
+.q-count{font-size:1rem;letter-spacing:.02em}
+.q-score{font-size:.95rem}
+.progress{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.progress>i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2),#bf5af2);transition:width .6s cubic-bezier(.3,.9,.3,1)}
+.dots{display:flex;gap:7px;justify-content:center;margin:14px 0 6px;flex-wrap:wrap}
+.dot{width:14px;height:14px;border-radius:50%;border:none;padding:0;background:var(--line);cursor:pointer;transition:transform .2s,background .3s}
+.dot:hover{transform:scale(1.25)}
+.dot.cur{outline:2.5px solid var(--accent);outline-offset:2px}
+.dot.ok{background:var(--green-bd)}.dot.bad{background:var(--red-bd)}
+#q-body.swap{animation:fadeUp .4s cubic-bezier(.2,.8,.2,1)}
+.q-text{font-size:clamp(1.4rem,3.2vw,2.3rem);font-weight:700;letter-spacing:-.02em;line-height:1.22;margin:22px 0 24px}
+.answers{display:grid;gap:12px}
+.ans{display:flex;align-items:center;gap:16px;text-align:left;font:inherit;font-size:clamp(1.05rem,2vw,1.4rem);font-weight:500;color:var(--text);padding:16px 20px;border-radius:20px;border:2px solid var(--line);background:var(--glass-strong);cursor:pointer;transition:transform .2s,border-color .25s,background .3s,box-shadow .2s;position:relative}
+.ans:hover:not(:disabled){transform:translateY(-2px) scale(1.005);border-color:var(--accent);box-shadow:0 8px 22px rgba(10,132,255,.18)}
+.ans:active:not(:disabled){transform:scale(.985)}
+.ans:disabled{cursor:default}
+.letter{flex:none;width:2.3em;height:2.3em;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.95em;background:var(--line);transition:background .3s,color .3s}
+.ans .mark{margin-left:auto;font-size:.8em;font-weight:600;opacity:0;white-space:nowrap}
+.ans.correct{border-color:var(--green-bd);background:var(--green-bg);animation:pop .55s}
+.ans.correct .letter{background:var(--green-bd);color:#fff}
+.ans.wrong{border-color:var(--red-bd);background:var(--red-bg)}
+.ans.wrong .letter{background:var(--red-bd);color:#fff}
+.ans.chosen{box-shadow:0 0 0 3px var(--accent)}
+.ans.chosen .mark{opacity:1;color:var(--accent)}
+.ans:disabled{color:var(--text)}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.025)}100%{transform:scale(1)}}
+.feedback{margin-top:18px;border-radius:22px;padding:18px 22px;display:none;animation:fadeUp .45s}
+.feedback.show{display:block}
+.feedback.ok{background:var(--green-bg);border:1.5px solid var(--green-bd)}
+.feedback.no{background:var(--red-bg);border:1.5px solid var(--red-bd)}
+.fb-title{font-weight:700;font-size:clamp(1.15rem,2.2vw,1.55rem);display:flex;align-items:center;gap:10px}
+.fb-title svg{width:1.3em;height:1.3em;flex:none;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.feedback.ok svg{stroke:var(--green)}.feedback.no svg{stroke:var(--red)}
+.fb-exp{margin-top:6px;font-size:clamp(1rem,1.8vw,1.2rem);line-height:1.5;color:var(--text);opacity:.9}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:22px}
+.hint{min-height:1.4em;text-align:center;color:var(--red);font-weight:500;margin-top:10px}
+
+/* Ergebnis */
+#screen-result .card{max-width:760px}
+.ring{position:relative;width:min(280px,64vw);aspect-ratio:1;margin:8px auto 18px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:14;stroke-linecap:round}
+.ring .track{stroke:var(--line)}
+.ring .fill{stroke:url(#grad);stroke-dasharray:597;stroke-dashoffset:597;transition:stroke-dashoffset 1.6s cubic-bezier(.2,.8,.2,1)}
+.ring-center{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.pct{font-size:clamp(2.8rem,8vw,4.4rem);font-weight:700;letter-spacing:-.04em;line-height:1}
+.pct-sub{color:var(--muted);font-weight:500;margin-top:4px}
+.verdict{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;margin:6px 0 4px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0 26px}
+.stat{padding:16px 8px;border-radius:22px;background:var(--glass-strong);border:1px solid var(--line)}
+.stat b{display:block;font-size:clamp(1.6rem,4vw,2.4rem);letter-spacing:-.03em}
+.stat span{color:var(--muted);font-size:.9rem;font-weight:500}
+.stat.g b{color:var(--green)}.stat.r b{color:var(--red)}
+
+/* Einstellungen */
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.28);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:30;opacity:0;pointer-events:none;transition:opacity .3s}
+#overlay.show{opacity:1;pointer-events:auto}
+#settings{position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;bottom:12px;width:min(400px,calc(100vw - 24px));z-index:40;transform:translateX(120%);transition:transform .45s cubic-bezier(.2,.8,.2,1);overflow:auto;padding:24px;border-radius:30px;background:var(--glass-strong);backdrop-filter:blur(36px) saturate(1.8);-webkit-backdrop-filter:blur(36px) saturate(1.8);border:1px solid var(--border);box-shadow:var(--shadow)}
+#settings.open{transform:none}
+.set-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.set-head h2{margin:0;font-size:1.5rem}
+.row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.row:last-of-type{border-bottom:none}
+.row .lbl b{display:block;font-weight:600}
+.row .lbl small{color:var(--muted)}
+.col{display:block}
+.seg{display:inline-flex;background:var(--line);border-radius:12px;padding:3px}
+.seg button{font:inherit;font-size:.92rem;font-weight:600;border:none;background:none;color:var(--text);padding:.5em 1em;border-radius:9px;cursor:pointer;transition:background .2s}
+.seg button.on{background:var(--glass-strong);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.switch{position:relative;width:52px;height:32px;flex:none;border-radius:99px;background:rgba(120,120,128,.35);border:none;cursor:pointer;transition:background .25s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:transform .25s}
+.switch.on{background:var(--green-bd)}
+.switch.on::after{transform:translateX(20px)}
+.btn.sm{font-size:.92rem;padding:.65em 1.2em;box-shadow:none}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.rangeval{color:var(--muted);font-weight:600;font-size:.9rem}
+
+/* Präsentationsmodus */
+body.pres #screen-quiz .card{max-width:1280px}
+body.pres .q-text{font-size:clamp(2rem,4.6vw,3.8rem);margin:30px 0 34px}
+body.pres .ans{font-size:clamp(1.4rem,2.9vw,2.4rem);padding:22px 28px;border-radius:26px}
+body.pres .answers{gap:16px}
+body.pres .progress{height:18px}
+body.pres .q-count{font-size:1.5rem}
+body.pres .q-score,body.pres .dots{display:none}
+body.pres .fb-title{font-size:clamp(1.5rem,3vw,2.4rem)}
+body.pres .fb-exp{font-size:clamp(1.2rem,2.3vw,1.9rem)}
+body.pres .btn{font-size:1.3rem;padding:.9em 2.2em}
+
+/* Konfetti dezent */
+.spark{position:fixed;pointer-events:none;z-index:50;width:10px;height:10px;border-radius:3px;animation:spark 1.2s ease-out forwards}
+@keyframes spark{to{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}
+
+@media (max-width:620px){
+  main{padding-top:76px}
+  .ans{padding:13px 14px;gap:12px}
+  .ans .mark{display:none}
+  .nav .btn{padding:.85em 1.2em;font-size:.98rem}
+  .stats{gap:8px}
+}
+@media (prefers-reduced-motion:reduce){.blob{animation:none}}
+</style>
+</head>
+<body data-theme="light">
+<div id="bg"></div>
+<div id="blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div id="topbar">
+  <div class="tb-left" id="tbLeft"></div>
+  <div class="tb-right">
+    <button class="icon-btn" id="btnPres" title="Präsentationsmodus (P)" aria-label="Präsentationsmodus">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+    </button>
+    <button class="icon-btn" id="btnFull" title="Vollbild (F)" aria-label="Vollbild">
+      <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+    </button>
+    <button class="icon-btn" id="btnSet" title="Einstellungen" aria-label="Einstellungen">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </div>
+</div>
+
+<main>
+  <!-- Passwort -->
+  <section class="screen active" id="screen-lock">
+    <div class="card center" style="max-width:460px">
+      <div class="lock-icon"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+      <div class="eyebrow">Geschützter Bereich</div>
+      <h2>Quiz <span class="grad">freischalten</span></h2>
+      <p class="lead" style="margin-bottom:0;font-size:1.05rem">Bitte gib das Passwort ein, um das Quiz zum Sudan-Konflikt zu öffnen.</p>
+      <form id="lockForm" autocomplete="off">
+        <div class="pw-wrap">
+          <input type="password" id="pw" placeholder="Passwort" aria-label="Passwort" autocomplete="off" autocapitalize="off" spellcheck="false">
+          <button type="button" class="pw-eye" id="pwEye" aria-label="Passwort anzeigen oder verbergen">
+            <svg viewBox="0 0 24 24" id="eyeIcon"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="pw-error" id="pwErr" role="alert"></div>
+        <button class="btn" type="submit" style="width:100%">Freischalten</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Start -->
+  <section class="screen" id="screen-start">
+    <div class="card center">
+      <div class="eyebrow">Interaktives Klassenquiz</div>
+      <h1>Quiz: <span class="grad">Saudi-Arabien im Sudan-Konflikt</span></h1>
+      <p class="lead">Teste dein Wissen über Saudi-Arabiens Rolle im Sudan-Konflikt, seine Vermittlungsversuche und seine politischen und humanitären Interessen.</p>
+      <div class="chips">
+        <div class="chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5M12 17h.01"/></svg>12 Fragen</div>
+        <div class="chip"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>4 Antwortmöglichkeiten</div>
+        <div class="chip"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Nur eine Antwort ist richtig</div>
+        <div class="chip"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c3 0 6 1.5 6 5.5"/></svg>Gemeinsames Quiz für die Klasse</div>
+      </div>
+      <button class="btn big" id="btnStart">Quiz starten</button>
+    </div>
+  </section>
+
+  <!-- Quiz -->
+  <section class="screen" id="screen-quiz">
+    <div class="card">
+      <div class="q-head"><span class="q-count" id="qCount"></span><span class="q-score" id="qScore"></span></div>
+      <div class="progress"><i id="bar"></i></div>
+      <div class="dots" id="dots"></div>
+      <div id="q-body">
+        <div class="q-text" id="qText"></div>
+        <div class="answers" id="answers"></div>
+        <div class="feedback" id="feedback"></div>
+      </div>
+      <div class="hint" id="hint" role="status"></div>
+      <div class="nav">
+        <button class="btn ghost" id="btnPrev">← Zurück</button>
+        <button class="btn" id="btnNext">Weiter →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ergebnis -->
+  <section class="screen" id="screen-result">
+    <div class="card center">
+      <div class="eyebrow">Endergebnis</div>
+      <div class="ring">
+        <svg viewBox="0 0 220 220">
+          <defs><linearGradient id="grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a84ff"/><stop offset=".6" stop-color="#5e5ce6"/><stop offset="1" stop-color="#bf5af2"/></linearGradient></defs>
+          <circle class="track" cx="110" cy="110" r="95"/>
+          <circle class="fill" id="ringFill" cx="110" cy="110" r="95"/>
+        </svg>
+        <div class="ring-center"><div class="pct" id="pct">0 %</div><div class="pct-sub" id="pctSub"></div></div>
+      </div>
+      <div class="verdict grad" id="verdict"></div>
+      <div class="stats">
+        <div class="stat g"><b id="sRight">0</b><span>richtig</span></div>
+        <div class="stat r"><b id="sWrong">0</b><span>falsch</span></div>
+        <div class="stat"><b id="sTotal">12</b><span>Fragen gesamt</span></div>
+      </div>
+      <div class="btnrow" style="justify-content:center">
+        <button class="btn ghost" id="btnReview">Antworten ansehen</button>
+        <button class="btn" id="btnRestart">Quiz neu starten</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="overlay"></div>
+<aside id="settings" aria-label="Einstellungen" aria-hidden="true">
+  <div class="set-head"><h2>Einstellungen</h2><button class="icon-btn" id="btnCloseSet" aria-label="Schließen"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+
+  <div class="row col">
+    <div class="lbl"><b>Hintergrundbild</b><small>Eigenes Bild vom Computer wählen</small></div>
+    <div class="btnrow">
+      <button class="btn sm" id="btnBgPick">Bild auswählen</button>
+      <button class="btn sm ghost" id="btnBgReset">Zurücksetzen</button>
+    </div>
+    <input type="file" id="bgFile" accept="image/*" hidden>
+    <small id="bgMsg" style="color:var(--muted);display:block;margin-top:8px"></small>
+  </div>
+
+  <div class="row">
+    <div class="lbl"><b>Designmodus</b></div>
+    <div class="seg" id="segTheme"><button data-v="light">Hell</button><button data-v="dark">Dunkel</button></div>
+  </div>
+
+  <div class="row">
+    <div class="lbl"><b>Animationen</b><small>Übergänge &amp; Effekte</small></div>
+    <button class="switch" id="swAnim" role="switch" aria-label="Animationen"></button>
+  </div>
+
+  <div class="row col">
+    <div style="display:flex;justify-content:space-between"><div class="lbl"><b>Schriftgröße</b></div><span class="rangeval" id="fsVal">100 %</span></div>
+    <input type="range" id="fsRange" min="85" max="150" step="5" value="100" aria-label="Schriftgröße">
+  </div>
+
+  <div class="row">
+    <div class="lbl"><b>Soundeffekte</b><small>Dezente Töne bei Antworten</small></div>
+    <button class="switch" id="swSound" role="switch" aria-label="Soundeffekte"></button>
+  </div>
+
+  <div class="row">
+    <div class="lbl"><b>Präsentationsmodus</b><small>Große Schrift, weniger Ablenkung</small></div>
+    <button class="switch" id="swPres" role="switch" aria-label="Präsentationsmodus"></button>
+  </div>
+
+  <div class="row" style="border:none">
+    <div class="lbl"><small>Tastenkürzel: ← → Navigation · A–D Antwort · P Präsentation · F Vollbild</small></div>
+  </div>
+</aside>
+
+<script>
+(function(){
+"use strict";
+
+/* ========== Daten: 12 Fragen ========== */
+var QUESTIONS=[
+ {q:"Wodurch sind Saudi-Arabien und der Sudan geografisch miteinander verbunden?",
+  a:["Durch den Persischen Golf","Durch das Rote Meer","Durch das Mittelmeer","Durch das Arabische Meer"],c:1,
+  e:"Saudi-Arabien (Arabische Halbinsel) und der Sudan (Nordosten Afrikas) sind geografisch durch das Rote Meer verbunden – eine wichtige Handelsroute."},
+ {q:"Warum beobachtet Saudi-Arabien die Entwicklungen im Sudan so genau?",
+  a:["Weil der Sudan Mitglied der Vereinten Nationen ist","Weil der Sudan direkt an den Persischen Golf grenzt","Weil es zwischen beiden Ländern keinerlei Handelsbeziehungen gibt","Weil die Lage im Sudan die regionale Sicherheit beeinflussen kann"],c:3,
+  e:"Der Sudan ist geopolitisch bedeutend: Seine Lage kann die regionale Sicherheit beeinflussen, und Saudi-Arabien möchte Stabilität in der Region."},
+ {q:"Welches Interesse spielt für Saudi-Arabien im Sudan eine besonders wichtige Rolle?",
+  a:["Die Sicherheit am Roten Meer","Der Ausbau der Ölförderung im Sudan","Die Übernahme der Kontrolle über die sudanesische Armee","Der Beitritt des Sudan zur Arabischen Halbinsel"],c:0,
+  e:"Durch das Rote Meer verlaufen wichtige Schifffahrtswege. Unsicherheit dort kann den internationalen Handel beeinflussen."},
+ {q:"Welche Aussage über Saudi-Arabiens Interessen im Sudan passt zum Vortrag?",
+  a:["Sie sind ausschließlich humanitär.","Sie sind rein militärischer Natur.","Sie sind nicht ausschließlich humanitär, sondern auch politisch und wirtschaftlich.","Saudi-Arabien hat im Sudan keinerlei eigene Interessen."],c:2,
+  e:"Saudi-Arabien will seine regionale Bedeutung stärken und sieht auch wirtschaftliche Möglichkeiten. Seine Interessen sind nicht ausschließlich humanitär."},
+ {q:"Mit welchem Staat arbeitet Saudi-Arabien bei der Vermittlung im Sudan-Konflikt unter anderem zusammen?",
+  a:["Russland","China","Den Vereinigten Staaten (USA)","Frankreich"],c:2,
+  e:"Saudi-Arabien und die USA unterstützten gemeinsam die Verhandlungen zwischen den Konfliktparteien."},
+ {q:"Was ist ein wichtiges Ziel der diplomatischen Vermittlungsgespräche?",
+  a:["Eine Waffenruhe","Neuwahlen im Sudan","Ein neues Handelsabkommen","Eine neue Verfassung für den Sudan"],c:0,
+  e:"Die Gespräche sollen die Kämpfe verringern – ein wichtiges Ziel ist eine Waffenruhe. Auch die Versorgung der Bevölkerung ist Teil der Verhandlungen."},
+ {q:"Was trifft auf die Jeddah-Verhandlungen zu?",
+  a:["Sie fanden in der sudanesischen Hauptstadt statt.","Sie begannen im Jahr 2020 ohne Vermittler.","Sie fanden zwischen Saudi-Arabien und den USA allein statt.","Sie begannen im Mai 2023 in Saudi-Arabien; Vertreter der Armee (SAF) und der RSF waren beteiligt."],c:3,
+  e:"Jeddah liegt an der Westküste Saudi-Arabiens. Dort begannen im Mai 2023 Gespräche zwischen SAF und RSF, unterstützt von Saudi-Arabien und den USA."},
+ {q:"Was wurde am 11. Mai 2023 in Jeddah unterzeichnet?",
+  a:["Ein Friedensvertrag, der den Krieg sofort beendete","Eine Erklärung zum Schutz der Zivilbevölkerung","Ein Wirtschaftsabkommen zwischen Saudi-Arabien und dem Sudan","Ein Abkommen über die Grenzen des Sudan"],c:1,
+  e:"Die Erklärung sollte Zivilisten schützen, humanitäre Hilfe erleichtern und wichtige Einrichtungen wie Krankenhäuser besser schützen."},
+ {q:"Was bedeutete die Unterzeichnung der Vereinbarung von Jeddah tatsächlich?",
+  a:["Der Krieg war damit nicht beendet; die Umsetzung blieb ein großes Problem.","Der Krieg war sofort vorbei.","Alle Hilfsorganisationen hatten ab sofort uneingeschränkten Zugang.","Beide Konfliktparteien lösten ihre Truppen auf."],c:0,
+  e:"Die Unterzeichnung bedeutete nicht, dass der Krieg beendet war. Saudi-Arabien fordert bis heute, die Vereinbarungen einzuhalten."},
+ {q:"Welche humanitäre Hilfe kündigte Saudi-Arabien im Jahr 2023 an?",
+  a:["10 Millionen US-Dollar","50 Millionen US-Dollar","1 Milliarde US-Dollar","100 Millionen US-Dollar"],c:3,
+  e:"Saudi-Arabien kündigte 2023 humanitäre Hilfen in Höhe von 100 Millionen US-Dollar an. Zusätzlich wurde eine Spendenaktion organisiert."},
+ {q:"Warum gestaltet sich die Vermittlung im Sudan-Konflikt so schwierig?",
+  a:["Weil Saudi-Arabien kein Interesse an Frieden hat","Wegen unterschiedlicher Ziele und gegenseitigem Misstrauen der Konfliktparteien","Weil es keine Möglichkeit für Gespräche gibt","Weil es im Sudan keine klar benennbaren Konfliktparteien gibt"],c:1,
+  e:"Die Parteien haben unterschiedliche politische und militärische Ziele, das Misstrauen erschwert Verhandlungen, und auch andere Staaten beeinflussen die Lage."},
+ {q:"Welche abschließende Einschätzung passt zum Fazit des Vortrags?",
+  a:["Saudi-Arabien ist der einzige Akteur und hat den Krieg beendet.","Saudi-Arabien spielt im Konflikt keine Rolle.","Saudi-Arabien ist ein wichtiger Akteur, aber nicht der einzige.","Die Zukunft des Sudan hängt allein von Saudi-Arabien ab."],c:2,
+  e:"Die Vermittlungen haben den Krieg nicht dauerhaft beendet. Die Zukunft hängt auch von den Konfliktparteien und weiteren internationalen Akteuren ab."}
+];
+var N=QUESTIONS.length, LET=["A","B","C","D"];
+
+var OK_MSG=["Richtig! Sehr gut aufgepasst!","Genau! Das habt ihr richtig erkannt!","Stark! Das war die richtige Antwort!","Volltreffer! Gut mitgedacht!","Perfekt! Ihr habt es drauf!","Absolut richtig! Weiter so!"];
+var BAD_MSG=["Leider nicht ganz! Die richtige Antwort ist {L}.","Knapp daneben! Jetzt wisst ihr es für die nächste Frage.","Nicht ganz – richtig wäre {L} gewesen.","Das passiert den Besten! Richtig ist {L}.","Fast! Die richtige Antwort ist {L}. Beim nächsten Mal klappt's!"];
+
+/* ========== Hilfen ========== */
+function $(id){return document.getElementById(id)}
+var store={
+  get:function(k,d){try{var v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},
+  set:function(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}},
+  del:function(k){try{localStorage.removeItem(k)}catch(e){}}
+};
+
+/* ========== Passwort (nur Hash im Code, nicht der Klartext) ========== */
+function hash(s,seed){seed=seed||7;var h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;
+  for(var i=0,ch;i<s.length;i++){ch=s.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677)}
+  h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);
+  h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);
+  return 4294967296*(2097151&h2)+(h1>>>0)}
+var PW_HASH=5486778716512749;
+
+/* ========== Screens ========== */
+var screens=["lock","start","quiz","result"];
+var current="lock";
+function show(name){
+  screens.forEach(function(s){$("screen-"+s).classList.remove("active")});
+  $("screen-"+name).classList.add("active");
+  current=name;
+  window.scrollTo(0,0);
+}
+
+/* ========== Passwortseite ========== */
+var pwInput=$("pw"), pwErr=$("pwErr");
+$("pwEye").addEventListener("click",function(){
+  var hidden=pwInput.type==="password";
+  pwInput.type=hidden?"text":"password";
+  $("eyeIcon").innerHTML=hidden
+   ?'<path d="M17.9 17.9A10 10 0 0 1 12 19C5.6 19 2 12 2 12a18 18 0 0 1 4.1-5M9.9 5.2A9 9 0 0 1 12 5c6.4 0 10 7 10 7a18 18 0 0 1-2.2 3.2M1 1l22 22"/>'
+   :'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';
+  pwInput.focus();
+});
+$("lockForm").addEventListener("submit",function(ev){
+  ev.preventDefault();
+  var v=pwInput.value;
+  if(hash("sudanquiz::"+v)===PW_HASH){
+    pwErr.textContent="";
+    document.body.classList.add("unlocked");
+    var s=$("screen-lock");s.classList.add("unlocking");
+    setTimeout(function(){s.classList.remove("unlocking");pwInput.value="";show("start")},noAnim()?0:650);
+  }else{
+    pwErr.textContent="Das war leider nicht das richtige Passwort. Bitte versuche es noch einmal.";
+    var c=$("screen-lock").querySelector(".card");
+    c.classList.remove("shake");void c.offsetWidth;c.classList.add("shake");
+    pwInput.select();
+  }
+});
+
+/* ========== Quiz-Logik ========== */
+var idx=0, answers=new Array(N).fill(null);
+
+function startQuiz(){idx=0;answers=new Array(N).fill(null);$("hint").textContent="";renderQ(false);show("quiz")}
+$("btnStart").addEventListener("click",startQuiz);
+
+function scoreNow(){var r=0;answers.forEach(function(a,i){if(a!==null&&a===QUESTIONS[i].c)r++});return r}
+function answeredCount(){return answers.filter(function(a){return a!==null}).length}
+
+function renderDots(){
+  var d=$("dots");d.innerHTML="";
+  for(var i=0;i<N;i++){
+    var b=document.createElement("button");b.className="dot";b.setAttribute("aria-label","Frage "+(i+1));
+    if(i===idx)b.classList.add("cur");
+    if(answers[i]!==null)b.classList.add(answers[i]===QUESTIONS[i].c?"ok":"bad");
+    (function(n){b.addEventListener("click",function(){goTo(n)})})(i);
+    d.appendChild(b);
+  }
+}
+
+function renderQ(animate){
+  var Q=QUESTIONS[idx], sel=answers[idx];
+  $("qCount").textContent="Frage "+(idx+1)+" von "+N;
+  $("qScore").textContent=answeredCount()+" von "+N+" beantwortet";
+  $("bar").style.width=((idx+1)/N*100)+"%";
+  $("qText").textContent=Q.q;
+  var box=$("answers");box.innerHTML="";
+  Q.a.forEach(function(t,i){
+    var b=document.createElement("button");b.className="ans";b.type="button";
+    b.innerHTML='<span class="letter">'+LET[i]+'</span><span class="txt"></span><span class="mark">Eure Wahl</span>';
+    b.querySelector(".txt").textContent=t;
+    if(sel!==null){
+      b.disabled=true;
+      b.classList.add(i===Q.c?"correct":"wrong");
+      if(i===sel)b.classList.add("chosen");
+    }else{
+      b.addEventListener("click",function(){choose(i)});
+    }
+    box.appendChild(b);
+  });
+  var fb=$("feedback");
+  if(sel!==null){showFeedback(sel===Q.c,false)}else{fb.className="feedback";fb.innerHTML=""}
+  $("btnPrev").disabled=(idx===0);
+  $("btnNext").textContent=(idx===N-1)?"Quiz abschließen ✓":"Weiter →";
+  renderDots();
+  if(animate){var b=$("q-body");b.classList.remove("swap");void b.offsetWidth;b.classList.add("swap")}
+}
+
+function showFeedback(ok,fresh){
+  var Q=QUESTIONS[idx], fb=$("feedback");
+  var msg;
+  if(ok){msg=OK_MSG[(idx+(fresh?Math.floor(Math.random()*3):0))%OK_MSG.length]}
+  else{msg=BAD_MSG[idx%BAD_MSG.length].replace("{L}",LET[Q.c])}
+  // Meldung pro Frage stabil halten
+  if(!Q._msg){Q._msg=msg}else{msg=Q._msg}
+  var icon=ok?'<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>':'<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  fb.className="feedback show "+(ok?"ok":"no");
+  fb.innerHTML='<div class="fb-title">'+icon+'<span></span></div><div class="fb-exp"></div>';
+  fb.querySelector(".fb-title span").textContent=msg;
+  fb.querySelector(".fb-exp").textContent="Richtig ist "+LET[Q.c]+": "+Q.a[Q.c]+". "+Q.e;
+}
+
+function choose(i){
+  if(answers[idx]!==null)return;
+  answers[idx]=i;
+  var ok=(i===QUESTIONS[idx].c);
+  renderQ(false);
+  showFeedback(ok,true);
+  var correctBtn=$("answers").children[QUESTIONS[idx].c];
+  if(ok){sparks(correctBtn);beep(true)}else{beep(false)}
+  $("hint").textContent="";
+}
+
+function goTo(n){
+  if(n<0||n>=N||n===idx)return;
+  idx=n;$("hint").textContent="";renderQ(true);
+}
+$("btnPrev").addEventListener("click",function(){goTo(idx-1)});
+$("btnNext").addEventListener("click",function(){
+  if(idx<N-1){goTo(idx+1);return}
+  // Letzte Frage -> abschließen
+  var open=[];answers.forEach(function(a,i){if(a===null)open.push(i+1)});
+  if(open.length){
+    $("hint").textContent=open.length===1
+      ?"Eine Frage ist noch offen: Frage "+open[0]+". Bitte erst beantworten."
+      :"Es sind noch "+open.length+" Fragen offen (Frage "+open.join(", ")+"). Bitte zuerst alle beantworten.";
+    return;
+  }
+  showResult();
+});
+
+/* ========== Ergebnis ========== */
+function verdictFor(r){
+  if(r<=3)return"Da ist noch Luft nach oben!";
+  if(r<=5)return"Ein guter Anfang!";
+  if(r<=7)return"Gut gemacht!";
+  if(r<=9)return"Sehr gut!";
+  if(r<=11)return"Starke Leistung!";
+  return"Perfekt! Ihr seid echte Experten!";
+}
+function showResult(){
+  var r=scoreNow(), w=N-r, pct=Math.round(r/N*100);
+  $("sRight").textContent=r;$("sWrong").textContent=w;$("sTotal").textContent=N;
+  $("verdict").textContent=verdictFor(r);
+  $("pctSub").textContent=r+" von "+N+" richtig";
+  show("result");
+  var fill=$("ringFill"),C=2*Math.PI*95;
+  fill.style.strokeDasharray=C;fill.style.strokeDashoffset=C;
+  var pEl=$("pct");pEl.textContent="0 %";
+  setTimeout(function(){
+    fill.style.strokeDashoffset=C*(1-r/N);
+    if(noAnim()){pEl.textContent=pct+" %";return}
+    var t0=null,dur=1500;
+    function step(t){if(!t0)t0=t;var p=Math.min((t-t0)/dur,1);pEl.textContent=Math.round(pct*(1-Math.pow(1-p,3)))+" %";if(p<1)requestAnimationFrame(step)}
+    requestAnimationFrame(step);
+  },80);
+  if(r===N)setTimeout(function(){sparks($("verdict"),40)},900);
+}
+$("btnRestart").addEventListener("click",function(){
+  QUESTIONS.forEach(function(q){delete q._msg});
+  startQuiz();
+});
+$("btnReview").addEventListener("click",function(){idx=0;renderQ(false);show("quiz")});
+
+/* ========== Dezente Effekte & Sound ========== */
+function noAnim(){return document.body.classList.contains("no-anim")}
+function sparks(el,count){
+  if(noAnim())return;
+  var r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+  var cols=["#34c759","#0a84ff","#5e5ce6","#ffd60a","#ff9f0a"];
+  for(var i=0;i<(count||16);i++){
+    var s=document.createElement("div");s.className="spark";
+    s.style.left=cx+"px";s.style.top=cy+"px";s.style.background=cols[i%cols.length];
+    var a=Math.random()*Math.PI*2,d=70+Math.random()*130;
+    s.style.setProperty("--x",Math.cos(a)*d+"px");s.style.setProperty("--y",Math.sin(a)*d+"px");
+    s.style.setProperty("--r",(Math.random()*540-270)+"deg");
+    document.body.appendChild(s);setTimeout(function(n){n.remove()},1300,s);
+  }
+}
+var actx=null;
+function beep(ok){
+  if(!settings.sound)return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    var seq=ok?[[659,0],[880,.11]]:[[330,0],[247,.13]];
+    seq.forEach(function(n){
+      var o=actx.createOscillator(),g=actx.createGain(),t=actx.currentTime+n[1];
+      o.type="sine";o.frequency.value=n[0];
+      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.08,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.28);
+      o.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+.3);
+    });
+  }catch(e){}
+}
+
+/* ========== Einstellungen ========== */
+var settings={theme:"light",anim:true,fs:100,sound:false,pres:false};
+function loadSettings(){
+  try{var s=JSON.parse(store.get("sudanquiz_settings","{}"));for(var k in s){if(k in settings)settings[k]=s[k]}}catch(e){}
+  if(settings.theme!=="dark")settings.theme="light";
+}
+function saveSettings(){store.set("sudanquiz_settings",JSON.stringify(settings))}
+function applySettings(){
+  document.body.setAttribute("data-theme",settings.theme);
+  document.body.classList.toggle("no-anim",!settings.anim);
+  document.documentElement.style.setProperty("--fs",settings.fs/100);
+  document.body.classList.toggle("pres",settings.pres);
+  $("btnPres").classList.toggle("active",settings.pres);
+  [].forEach.call($("segTheme").children,function(b){b.classList.toggle("on",b.dataset.v===settings.theme)});
+  $("swAnim").classList.toggle("on",settings.anim);$("swAnim").setAttribute("aria-checked",settings.anim);
+  $("swSound").classList.toggle("on",settings.sound);$("swSound").setAttribute("aria-checked",settings.sound);
+  $("swPres").classList.toggle("on",settings.pres);$("swPres").setAttribute("aria-checked",settings.pres);
+  $("fsRange").value=settings.fs;$("fsVal").textContent=settings.fs+" %";
+}
+function setOpen(o){
+  $("settings").classList.toggle("open",o);$("overlay").classList.toggle("show",o);
+  $("settings").setAttribute("aria-hidden",!o);
+}
+$("btnSet").addEventListener("click",function(){setOpen(true)});
+$("btnCloseSet").addEventListener("click",function(){setOpen(false)});
+$("overlay").addEventListener("click",function(){setOpen(false)});
+[].forEach.call($("segTheme").children,function(b){b.addEventListener("click",function(){settings.theme=b.dataset.v;applySettings();saveSettings()})});
+$("swAnim").addEventListener("click",function(){settings.anim=!settings.anim;applySettings();saveSettings()});
+$("swSound").addEventListener("click",function(){settings.sound=!settings.sound;applySettings();saveSettings();if(settings.sound)beep(true)});
+$("swPres").addEventListener("click",function(){togglePres()});
+$("fsRange").addEventListener("input",function(){settings.fs=+this.value;applySettings();saveSettings()});
+function togglePres(){settings.pres=!settings.pres;applySettings();saveSettings()}
+$("btnPres").addEventListener("click",togglePres);
+
+/* Hintergrundbild */
+function setBg(url){var bg=$("bg");bg.style.setProperty("--bgimg",'url("'+url+'")');bg.classList.add("custom")}
+function resetBg(){var bg=$("bg");bg.classList.remove("custom");bg.style.removeProperty("--bgimg");store.del("sudanquiz_bg");$("bgMsg").textContent="Standard-Hintergrund aktiv."}
+$("btnBgPick").addEventListener("click",function(){$("bgFile").click()});
+$("btnBgReset").addEventListener("click",resetBg);
+$("bgFile").addEventListener("change",function(){
+  var f=this.files&&this.files[0];if(!f)return;
+  if(f.type.indexOf("image/")!==0){$("bgMsg").textContent="Bitte eine Bilddatei wählen.";return}
+  var rd=new FileReader();
+  rd.onload=function(){
+    // Bild verkleinern, damit es in localStorage passt
+    var img=new Image();
+    img.onload=function(){
+      var max=1920,sc=Math.min(1,max/Math.max(img.width,img.height));
+      var c=document.createElement("canvas");c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+      var url;try{url=c.toDataURL("image/jpeg",.82)}catch(e){url=rd.result}
+      setBg(url);
+      $("bgMsg").textContent=store.set("sudanquiz_bg",url)?"Hintergrund gesetzt und gespeichert.":"Hintergrund gesetzt (nur für diese Sitzung, Bild zu groß zum Speichern).";
+    };
+    img.onerror=function(){setBg(rd.result);$("bgMsg").textContent="Hintergrund gesetzt."};
+    img.src=rd.result;
+  };
+  rd.readAsDataURL(f);
+  this.value="";
+});
+
+/* Vollbild */
+function isFull(){return document.fullscreenElement||document.webkitFullscreenElement}
+function toggleFull(){
+  var el=document.documentElement;
+  try{
+    if(!isFull()){(el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el)}
+    else{(document.exitFullscreen||document.webkitExitFullscreen||function(){}).call(document)}
+  }catch(e){}
+}
+$("btnFull").addEventListener("click",toggleFull);
+function syncFull(){$("btnFull").classList.toggle("active",!!isFull())}
+document.addEventListener("fullscreenchange",syncFull);
+document.addEventListener("webkitfullscreenchange",syncFull);
+
+/* Tastatur */
+document.addEventListener("keydown",function(e){
+  var tag=(e.target.tagName||"").toLowerCase();
+  if(tag==="input"&&e.target.type!=="range"&&e.target.type!=="file")return;
+  if(e.key==="Escape"){setOpen(false);return}
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  var k=e.key.toLowerCase();
+  if(current==="lock")return;
+  if(k==="p"){togglePres();return}
+  if(k==="f"){toggleFull();return}
+  if(current==="quiz"){
+    if(k==="arrowright"){$("btnNext").click()}
+    else if(k==="arrowleft"){goTo(idx-1)}
+    else if("abcd".indexOf(k)>-1&&k.length===1){choose("abcd".indexOf(k))}
+  }
+});
+
+/* ========== Init ========== */
+loadSettings();applySettings();
+var savedBg=store.get("sudanquiz_bg",null);if(savedBg)setBg(savedBg);
+$("pw").focus();
+})();
+</script>
+</body>
+</html>
